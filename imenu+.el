@@ -604,38 +604,7 @@ non-nil.  See `imenu--index-alist' for the format of the index alist."
       (if (fboundp 'user-error)
           (user-error "No items suitable for an index found in this buffer")
         (error "No items suitable for an index found in this buffer")))
-  (or imenu--index-alist  (setq imenu--index-alist  (list nil)))
-  (let ((bookmarks-available-here-p  (and (fboundp 'bmkp-exists-bookmark-satisfying-p)
-                                          (bmkp-exists-bookmark-satisfying-p
-                                           (if (buffer-file-name) #'bmkp-this-file-p #'bmkp-this-buffer-p)))))
-    (append (cons imenu--rescan-item    ; `*Rescan*'.
-                  (append (and bookmarks-available-here-p
-                               `(("Toggle Showing Bookmarks Here" IGNORE
-                                  (lambda (&rest _ignore) (imenup-toggle-showing-bookmarks)))))
-                          (cons '("Toggle Case-Sensitive Name-Sort" IGNORE
-                                  (lambda (&rest _ignore) (imenup-toggle-case-sensitive-sorting)))
-                                (cons '("Toggle Sorting" IGNORE (lambda (&rest _ignore) (imenup-toggle-sort)))
-                                      (if (fboundp 'imenup-toggle-ignoring-comments)
-                                          (cons '("Toggle Ignoring Commented Defs" IGNORE
-                                                  (lambda (&rest _ignore) (imenup-toggle-ignoring-comments)))
-                                                imenu--index-alist)
-                                        imenu--index-alist)))))
-            (and imenup-show-bookmarks-flag
-                 bookmarks-available-here-p
-                 `(("Bookmarks Here" .
-                    (,@(mapcar
-                        (lambda (bmk)
-                          (cons (bookmark-name-from-record bmk) (bookmark-get-position bmk)))
-                        (bmkp-this-file/buffer-alist-only))
-                     (,@(and (not imenu-sort-function) '("----" IGNORE ignore)))
-                     ("Next Bookmark Here" IGNORE
-                      (lambda (&rest _ignore)
-                        (bmkp-next-bookmark-this-file/buffer-repeat current-prefix-arg)))
-                     ("Previous Bookmark Here" IGNORE
-                      (lambda (&rest _ignore)
-                        (bmkp-previous-bookmark-this-file/buffer-repeat current-prefix-arg)))
-                     ("Show Bookmark List for All Bookmarks Here" IGNORE
-                      (lambda (&rest _ignore) (bmkp-this-file/buffer-bmenu-list))))))))))
+  (or imenu--index-alist  (setq imenu--index-alist  (list nil))))
 
 ;; Same as `thgcmd-invisible-p' in `thing-cmds.el', and `icicle-invisible-p' in `icicles-cmd2.el'.
 (defun imenup-invisible-p (position)
